@@ -1,9 +1,39 @@
 ########################
 ###   text parsing   ###
 ########################
-def findall(substring,s): #renvoie les positions de tous les substrings du string s
+def findall(string,sub): #Retourne la liste de tous les index d'un substring dans un string
+	start=0
+	indexlist=[]
+	while True:
+		index=string.find(sub,start)
+		if index is -1: break
+		indexlist.append(index)
+		start = index+1
+	return indexlist
+
+def findall_re(s,substring): #renvoie les positions de tous les substrings du string s
 	import re
 	return [m.start() for m in re.finditer('substring', 's')]
+
+#######################
+###   list tricks   ###
+#######################
+
+def multisort(listOfLists): #sort a list of lists according to the first list
+	sorted_listOfLists = []
+	for i in listOfLists:
+		a,b = zip(*sorted(zip(listOfLists[0],i)))
+		sorted_listOfLists.append(b)
+	return [list(x) for x in sorted_listOfLists]
+
+def test_multisort(): 
+	a=[2,1,3]
+	b=['Deux','Un','Trois']
+	c=['D','U','T']
+	a,b,c = multisort([a,b,c])
+	print(a,b,c)
+	
+	
 
 ###############	
 ###   seq   ###
@@ -35,15 +65,6 @@ def hamming(seq1,seq2): #Compte le nombre de diff entre 2 string (distance de Ha
 	return sum( [a != b for a,b in zip(seq1,seq2)] )
 
 
-def findall(string,sub): #Retourne la liste de tous les index d'un substring dans un string
-	start=0
-	indexlist=[]
-	while True:
-		index=string.find(sub,start)
-		if index is -1: break
-		indexlist.append(index)
-		start = index+1
-	return indexlist
 
 
 #################
