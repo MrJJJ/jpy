@@ -81,7 +81,9 @@ def fasta2tuple(f):
 	return (sp,seq)
 
 def fasta2dic(f):
-	fasta=open(f).readlines()
+	fastaStream = open(f)
+	fasta = fastaStream.readlines()
+	fastaStream.close()
 	sp = [x.replace('\n','').rstrip() for x in fasta if x[0] == '>']
 	seq = ''.join([x.rstrip() if x[0]!='>' else '@' for x in fasta])[1:].split('@')
 	GC3 = [ gc3(x) for x in seq ]
