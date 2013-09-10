@@ -82,4 +82,4 @@ print('')
 print 'for f in '+name+'*.sh ; do qsub -cwd -q long.q -b y ./$f ; done'
 
 if submit == 1:
-	os.system('for f in '+name+'*.sh ; do qsub -cwd -q long.q -b y ./$f ; done')
+	os.system('for f in '+name+'*.sh ; do chmod 700 $f ; qsub -cwd -q long.q -b y ./$f ; done')
