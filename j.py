@@ -1,3 +1,5 @@
+import math
+
 ########################
 ###   text parsing   ###
 ########################
@@ -161,7 +163,7 @@ def treeToTaxa(tree): # treeTotaxa : renvoie une liste des noms des noeuds du gÃ
 			taxa=taxa.replace(')','')
 			taxa=taxa.replace(':','')
 			taxa=taxa.replace(' ','')
-			#taxa=taxa.replace(',','*')
+			taxa=taxa.replace(',','+')
 			taxas.append(taxa) # Ajout de sp1_sp2_sp3... dans le taleau taxas
 	return taxas
 
@@ -233,3 +235,9 @@ def treeToBL(tree): # arbre -> liste des longueurs de branches
 		BL.append(BLsp)
 		#print(char)
 	return BL
+
+
+#################
+###   Stats   ###
+#################
+
