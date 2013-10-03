@@ -1,3 +1,6 @@
+# encoding utf-8
+
+
 import math
 
 ########################
@@ -35,7 +38,16 @@ def test_multisort():
 	a,b,c = multisort([a,b,c])
 	print(a,b,c)
 	
-	
+class csv(list): #Extension of class list to make cool stuff with csv
+	def __init__(self, *args):
+		list.__init__(self, *args)
+		self.headers = self[0] #headers attribute
+		for i,header in enumerate(self[0]):
+			setattr(self,header,[x[i] for x in self[1:]]) #attribute columnName return the column as a list
+			setattr(self,header+'_id',self[0].index(header))#attribute columnName_id return the id of the column
+	def sort(self, column, reverse=False): #sort by a column
+		return [y for (x,y) in sorted(zip(column,self[1:]),reverse=reverse)]
+
 
 ###############	
 ###   seq   ###
@@ -118,7 +130,7 @@ def allFastaHaveSameNumberOfSpecies(globstr): #Test if all alignments have same 
 ################
 
 
-def treeToTaxa(tree): # treeTotaxa : renvoie une liste des noms des noeuds du gène mais où les noeuds internes sont désignés par l'ensemble des espèces qu'ils contiennent (sp1_sp2_..._spN)
+def treeToTaxa(tree): # treeTotaxa : renvoie une liste des noms des noeuds du gene mais ou les noeuds internes sont designes par l'ensemble des espèces qu'ils contiennent (sp1_sp2_..._spN)
 	nbNode = tree.count(":") #compte le nombre de ':' (=noeuds)
 #	print("Il y a",nbNode,"noeuds")
 	taxas=[] #Tableau qui va acceuillir tous les noms de taxons
