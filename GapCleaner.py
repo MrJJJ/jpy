@@ -63,7 +63,7 @@ if __name__=="__main__":
 																											(default = 0.25)''')
 
 	files.add_argument('-S', '--removeStop', choices=('False','True'), dest = 'removeStop', default = 'False', help = 'Remove Stop codons (default = False)')
-	files.add_argument('-t', '--type', type=str, metavar='<str>', dest='type', default='dna', help = 'Type of sequences : dna or aa ? (default = dna')
+	files.add_argument('-t', '--type', type=str, metavar='<str>', dest='type', default='dna', help = 'Type of sequences : dna or aa ? (default = dna)')
 
 	files.add_argument('-i', '--input', metavar="<filename>", dest = 'alignfile', help = 'Name of file containing alignement')
 	files.add_argument('-o', '--output', metavar="<filename>", dest = 'alignfileout', help = 'Name of output file containing alignement remove (default= nomAlign_clean.fasta)')
