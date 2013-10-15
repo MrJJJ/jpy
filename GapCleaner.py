@@ -52,17 +52,17 @@ if __name__=="__main__":
 	start_time = strftime("%d-%m-%Y_%H:%M:%S", localtime())
 
 	# Parameters recovery
-	parser = argparse.ArgumentParser(prog='Gapcleaner.py', description='''This Programme remove Gap with seuil from alignement''')
+	parser = argparse.ArgumentParser(prog='Gapcleaner.py', description='''This Programme remove Gap with threshold from alignement''')
 	parser.add_argument('-v', '--version', action='version', version='You are using %(prog)s version: ' + version, help='display Gapcleaner version number and exit')
 	parser.add_argument('-d', '--debug',choices=("False","True"), dest='debug', help='enter verbose/debug mode', default = "False")
 	
 	files = parser.add_argument_group('Input info for running')
 	files.add_argument('-s', '--seuil',type=float, metavar="<float>", dest = 'seuil', default=0.25, help = '''Seuil ?\n\
-																											0 = no gap in cleaned alignment,\n\
-																											1 = all gap in cleaned alignment.\n\
-																											(default = 0.25)''')
+																											0 = no gap cleaning,\n\
+																											1 = max gap cleaning, no gap at all in cleaned alignment.\n\
+																											(default = 0.75)''')
 
-	files.add_argument('-S', '--removeStop', choices=('False','True'), dest = 'removeStop', default = 'False', help = 'Remove Stop codons (default = False)')
+	files.add_argument('-S', '--removeStop', dest = 'removeStop', action='store_true', help = 'Remove Stop codons (default = False)')
 	files.add_argument('-t', '--type', type=str, metavar='<str>', dest='type', default='dna', help = 'Type of sequences : dna or aa ? (default = dna)')
 
 	files.add_argument('-i', '--input', metavar="<filename>", dest = 'alignfile', help = 'Name of file containing alignement')
@@ -116,7 +116,7 @@ if __name__=="__main__":
 			while j <= len(sequences[0]):
 				#if sequences[i][j:j+3] in ['TAA', 'TAG']:
 				if sequences[i][j:j+3] in ['TAA', 'TGA','TAG']:
-					print("Présence d'un codon stop dans la sequence",nomsEspeces[i].rstrip(),"au site",j+1,". Il sera remplacer par NNN")
+					print("Stop codon in sequence",nomsEspeces[i].rstrip(),"at site",j+1,"-> Replaced by NNN.")
 					sequences[i] = sequences[i][:j]+"NNN"+sequences[i][j+3:]
 				j += 3
 			j=0
@@ -127,7 +127,7 @@ if __name__=="__main__":
 			while j < len(sequences[0]):
 				sequences[i][j].replace("a","A").replace("c","C").replace("t","T").replace("g","G")
 				if sequences[i][j] not in ['A', 'C', 'T', 'G','-','N','n','a', 't', 'c', 'g']:
-					print("Présence de la lettre",sequences[i][j], "dans la sequence",nomsEspeces[i].rstrip(),"au site",j,". Il sera remplacer par N")
+					print("Letter",sequences[i][j], "in sequence",nomsEspeces[i].rstrip(),"at site",j,"-> Replaced by N.")
 					sequences[i] = sequences[i][:j]+"N"+sequences[i][j+1:]
 				j += 1
 			j=0
@@ -161,7 +161,7 @@ if __name__=="__main__":
 			gapScore[i+1] = gapScore[i+1]/len(nomsEspeces)
 			gapScore[i+2] = gapScore[i+2]/len(nomsEspeces)
 			
-			if gapScore[i]  <= seuil and gapScore[i+1]  <= seuil and gapScore[i+2]  <= seuil:
+			if gapScore[i]  <= 1-seuil or gapScore[i+1]  <= 1-seuil or gapScore[i+2]  <= 1-seuil:
 				for j in range (0, len(nomsEspeces)):
 					#print(sequences[j])
 					nogap[j] = nogap[j]+sequences[j][i]
@@ -173,7 +173,7 @@ if __name__=="__main__":
 		for i in range(0,nbSitesInitial):
 			gapScore[i] = gapScore[i]/len(nomsEspeces)
 			
-			if gapScore[i]  <= seuil:
+			if gapScore[i]  <= 1-seuil:
 				for j in range (0, len(nomsEspeces)):
 					#print(sequences[j])
 					nogap[j] = nogap[j]+sequences[j][i]
@@ -198,17 +198,22 @@ if __name__=="__main__":
 			fichierSortie.write("\n")
 	fichierSortie.close()
 
-
 	# Display a summary of the execution
 	print('\nExecution summary:' + "")
-	print('\t-',nomAlign, "rassemble",len(nomsEspeces),"espèces.")
-	if len(nomsEspeces) == 4:
-		print('\t- Seuil utilisé : 0.25')
+	print('\t-',nomAlign, "have",len(nomsEspeces),"species.")
+	print('\t- Type of sequences :',args.type)
+	if args.removeStop == True:
+		print('\t- Remove Stops = True')
 	else:
-		print('\t- Seuil utilisé :',seuil)
-	print("\t- Il y a", nbSitesInitial, "sites dans l'alignement de départ.")
-	print("\t- Il y a", nbSitesFinal, "sites dans l'alignement nettoyé --->", (1-(nbSitesFinal / nbSitesInitial)) *100 , "% des sites ont étés éliminés")
-	print("\t- Fichier \"",nomFichierSortie,"\" créer")
+		print('\t- Remove Stops = False')
+
+	if len(nomsEspeces) == 4:
+		print('\t- Threshold used : 0.75')
+	else:
+		print('\t- Threshold used :',seuil)
+	print("\t- There were", nbSitesInitial, "sites in the alignment.")
+	print("\t- There are", nbSitesFinal, "sites in the cleaned alignment --->", (1-(nbSitesFinal / nbSitesInitial)) *100 , "% of sites eliminated.")
+	print("\t- File \"",nomFichierSortie,"\" created.")
 	
 		
 	print("\nStop time: ", strftime("%d-%m-%Y_%H:%M:%S", localtime()))
