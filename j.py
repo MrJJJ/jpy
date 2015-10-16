@@ -106,7 +106,9 @@ def fasta2dic(f):
 	fastaStream.close()
 	sp = [x.replace('\n','').rstrip().replace('>','') for x in fasta if x[0] == '>']
 	seq = ''.join([x.rstrip() if x[0]!='>' else '@' for x in fasta])[1:].split('@')
-	dic = {k:v for k in sp for v in seq}
+	dic = {}
+	for i in range(len(sp)):
+		dic[sp[i]] = seq[i]
 	return dic 
 
 def fasta2richdic(f):
